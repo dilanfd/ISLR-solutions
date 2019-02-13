@@ -1,0 +1,57 @@
+---
+title: "Chapter 4 Solutions"
+author: "Dilan Fernando"
+date: "`r format(Sys.Date())`"
+output: github_document
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+## **4.7.1**
+This is trivial. Follows immediately from the fact that
+\[
+1 - p(X) = \frac{1}{1 + e^{\beta_0 + \beta_1 X}}
+\]
+
+
+----------
+
+## **4.7.2**
+
+***Problem Statement***: _Assume that the observations in the \(k\)th class are
+drawn from a \(N(\mu_k, \sigma^2)\) distribution. Prove that the Bayes
+classifier assigns an observation to the class for which the
+discriminant function is maximized_
+
+***Solution outline***: Note the following:
+
+- We are trying to maximize over $k$.
+- Since $\log$ is a monotonic increasing function
+\[
+ \arg \max_k (p_k(x)) = \arg \max_k(\log(p_k(x))
+\]
+
+We would like to maximize $p_k(x)$ where
+\[
+p_k(x) = \frac{\pi_k \frac{1}{\sqrt{2 \pi \sigma}} e^{- \frac{1}{2\sigma^2} (x - \mu_k)^2}}{C}
+\]
+
+where $C$ is some constant independent of $k$. Taking logs we get
+
+\[
+\log(p_k(x)) = \log(\pi_k) - \log(C_1) - \frac{1}{2\sigma^2} (x - \mu_k)^2
+\]
+Since the $x^2$ term is independent of $k$ we can now write
+
+\begin{align}
+\log(p_k(x)) & = \log(\pi_k) - \log(C_1) -C_2 + x \cdot
+\frac{\mu_k}{\sigma^2} - \frac{\mu_k^2}{2\sigma^2} \\
+	& =: \delta_k(x) - \log C_1 - C_2
+\end{align}
+The conclusion now follows.
+
+----------
+
+
