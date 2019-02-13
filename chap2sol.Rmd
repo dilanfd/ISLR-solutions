@@ -1,0 +1,287 @@
+---
+title: "Chapter 2 Solutions"
+author: "Dilan Fernando"
+date: "`r format(Sys.Date())`"
+output: github_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+----------
+
+ **Conceptual Questions**
+ 
+## 2.4.1
+Let $n$ = sample size and $p$ = number of predictors.
+
+(a) $n$ is extremely large and $p$ is small
+
+	*Answer*: Flexible is better because we have a lot of training
+	data and an inflexible model will have too much bias that can't
+	be overcome with the large amount of data points we have.
+
+(b) $p$ is extremely large and $n$ is small.
+
+	*Answer*: An inflexible model will do better because we don't have
+	a lot of data (n) to work with. The flexible model will introduce
+	large amount of variance to the model and will overfit the data.
+
+(c) The predictor response relationship is highly non-linear.
+
+	*Answer*: The flexible method will do better because it can
+	potentially capture all of the subtleties and non linearities
+	in the data. An inflexible model simply won't have the necessary
+	number of variable to catch the non linearities.
+	
+(d)	The variance of the error terms $\sigma^2 =
+                                     \mathrm{Var}(\epsilon)$ is
+                                     extremely high.
+	
+	*Answer:* Inflexible methods are preferred. If we used flexible
+	methods we will simply model the noise in the data and overfit
+	our model.
+	
+----------
+
+## 2.4.2
+
+(a) Regression. Interested in inference. $n = 500$ and \(p = 3\)
+	
+(b) Classification. Prediction. n = 20 and p = 13.
+
+(c) Regression. Prediction. n = 52 * 3 and p = 3.
+
+
+----------
+
+
+## 2.4.3 (Bias vs Variance decomposition)
+
+(a)
+
+```{r echo=FALSE, out.width='50%'}
+knitr::include_graphics('./figures/bias-variance.JPG')
+```
+
+(b) 
+  * 
+  * `variance`
+
+  As model flexibility increases it starts go after
+  (using Hastie vernacular) noise in the data. This results in an
+  overfitting model. So if we estimate $\hat f$ using a different
+  training set we will end up with a different $\hat f$ resulting
+  in a higher `variance`.
+	
+  * squared `bias`
+  
+  Bias is introduced when we estimate a potentially complicated real-
+  life problem using a much simpler model. So simple models will have
+  higher bias. Naturally, as model flexibility increase this bias will
+  decrease.
+  
+  * `training error`
+  
+  The more flexible the model the less the training error should be.
+  It gradually decreases as it gradually does better and better at
+  even predicting noise in the data. 
+  
+  * `test error`
+  
+  Test error will decrease as model complexity increase only upto
+  a certain point. After this point, certain models which are
+  overfitting the data will not be able to give good predictions
+  to unseen data resulting in a larger test error. 
+
+  * `irreducible error`
+	
+  Irreducible error by definition is unaffected by model flexibility
+  (or any other external force). It remains constant no matter what.
+  
+----------
+
+## 2.4.4
+
+(a) **Classification examples**
+
+	* flagging a financial transaction as fraudulent or not.
+	This is a classification prediction problem.
+	
+	* flagging a loan application as being at risk for default or not.
+	The end goal is prediction.
+	
+	* Trying to understand which demographic/personal data contribute
+	to determining possible loan defaulters. This is a classification
+	problem with the end goal of inference.
+	
+(b)	** Regression **
+	
+	* Trying to predict next years sales using this years budget on
+	advertising. This is a prediction.
+	
+	* Trying to understand which media (radio/tv/newspaper) contribute
+	to sales. This is a regression problem whose end goal is
+	inference.
+	
+	* Trying to predict the price of a stock using past data. The goal
+	is prediction using regression. (of course this is a naive
+	example).
+
+(c)	**Cluster Analysis**
+
+	* Market segmentation of identifying types of customers.
+   
+	* Determining terrorist threat levels (low, moderate, high)
+	using NLP.
+	
+	* Segmenting a population as being at high risk, low risk
+	and moderate for heart desease on demographic and personal
+	data.
+
+----------
+
+## 2.4.5
+
+**More flexible vs less flexible**
+	
+A very flexible approach may be useful if we have a large number
+of training data (in the thousands) with only a handful of predictor
+variables. The reason being, with the large number of training data
+we will be able to capture all of the subtleties of the data set
+without overfitting. This of course works under the standing
+assumptions that the `real relationship is not linear`. On the
+other hand if we had only a small number of data points and a
+relatively large number of features, then a less flexible model
+will be the better choice. This is because a more flexible model
+will go after the noise in the data and will overfit. 
+
+## 2.4.6
+
+**Parametric vs Non parametric**
+
+Parametric methods (regression/logistic models etc) are interpretable
+whereas non parametric methods (k nearest neighbors/SVM etc) are
+difficult to interpret. It all depends on the type of problem one
+is trying to solve. For example if we are trying to predict stock
+prices then a non interpretable model is fine as long as it gives
+us correct results. On the other hand if our goal is inference, then
+we may need to know how features are related (if at all). In such
+cases, interpretability of our model plays a role.
+
+
+## 2.4.7
+
+
+```{r}
+eucl_dist <- function(x, y, z){
+    ## compute l2 distance.
+    return(sqrt(sum(x^2, y^2, z^2)))
+}
+```
+(a) 
+
+- Distance between $(0, 3, 0)$ and $(0, 0, 0)$ is `r round(eucl_dist(0,3,0), 2)`
+
+- Distance between $(2, 0, 0)$ and $(0, 0, 0)$ is `r round(eucl_dist(2,0,0), 2)`
+
+- Distance between $(0, 1, 3)$ and $(0, 0, 0)$ is `r round(eucl_dist(0,1,3), 2)`
+  
+- Distance between $(0, 1, 2)$ and $(0, 0, 0)$ is `r round(eucl_dist(0,1,2), 2)`
+
+- Distance between $(-1, 0, 1)$ and $(0, 0, 0)$ is `r round(eucl_dist(-1, 0,1), 2)`
+  
+- Distance between $(1, 1, 1)$ and $(0, 0, 0)$ is `r round(eucl_dist(1,1, 1), 2)`
+
+(b)
+
+$K = 1$ means that we want the nearest neighbor. Since the
+smallest euclidean distance is the one that corresponds to observation
+6 whose prediction is `Green`. So we assign the prediction `Green ` to
+$(0, 0, 0)$.
+
+(c) 
+
+ **Intuitively**
+ 
+$K=3$ means we look at the its three nearest neighbors and assign the
+conclusion that arises the most out of the three. The three neighbors
+are,
+
+\begin{align}
+x_2 & = (2, 0, 0): & \quad \text{Red} \\
+x_5 & = (-1, 0, 1): & \quad \text{Green} \\
+x_6 & = (1, 1, 1): & \quad \text{Red}
+\end{align}
+
+Clearly the response that arises the most is `Red`and so we assign
+`Red` as the assignment for the point $(0, 0, 0)$.
+
+ **Mathematically**
+ 
+$K = 3$ means that we choose those points that are closest to 
+\(x_0 = (0, 0, 0)\). We then have \(\{x_2, x_5, x_6\} = \mathcal{N}_0\).
+Since `red` and `green` are the only possible responses, we check
+them. More precisely,
+
+\begin{align}
+\mathrm{Pr}(Y = Red | X = x_0) & = \frac{1}{K}\sum_{i \in \mathcal{N}_0}
+I(y_i = Red) & = \frac{1}{3}\left(1 + 0 + 1\right) & = \frac{2}{3}\\
+\mathrm{Pr}(Y = Green | X = x_0) & = \frac{1}{K}\sum_{i \in \mathcal{N}_0}
+I(y_i = Green) & = \frac{1}{3}\left(0 + 1 + 0\right) & = \frac{1}{3}\\
+\end{align}
+
+Since the larger of the two probabilities is \(2/3\) we assign `Red`
+as response for `(0, 0, 0)`. QED.
+
+(c) If the Bayes decision boundary were highly non linear we would
+expect the value of `K` to be small. We would like to capture all
+of non linearity and so we do not want to go too far out of our
+immediate neighbors. The effect is that we will want to stay pretty
+close to our neighborhood. So choose a small `K` value.
+
+----------
+
+ **Applied Questions**
+
+## 2.4.8
+```{r}
+library("ISLR")
+attach(College) # foo instead of College$foo
+```
+
+
+
+(a) - (b) already done in the `ISLR` package. So nothing to do here.
+
+
+(c) 
+	(i)
+	```{r}
+	summary(College)
+    ```
+	
+	(ii)
+	```{r}
+        # scatter plots of the first 10 columns
+        pairs(College[, 1:10]) 
+	```
+
+	(iii)
+	```{r}
+        ## A box plot of Out of state tuition on y axis and whether private or not on x axis.
+        boxplot(Outstate ~ Private,
+             main = "Out of state tuition",
+             ylab = "Out of state tuition",
+             col = "orange",
+             xlab = "Private College")
+	 ```
+
+	
+	
+
+
+
+	
+
