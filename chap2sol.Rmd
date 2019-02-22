@@ -278,10 +278,315 @@ attach(College) # foo instead of College$foo
              xlab = "Private College")
 	 ```
 
+	(iv) 
 	
+	Create a new variable `Elite` by _binning_ the `Top10perc`
+	variable according as follows:
+	
+	Elite = at least 50% of the students are in the top 10% of
+	highschool and not Elite otherwise.
 	
 
+```{r}	
+
+Elite <- rep("No", nrow(College))
+Elite[Top10perc > 50] <- "Yes"
+Elite <- as.factor(Elite)
+college_new <- data.frame(College, Elite)
+
+## Attach the college_new
+attach(college_new)
+
+## Count the number of elite universities.
+summary(Elite)
+```
+
+	There are 78 Elite Universities according to our criteria.
+
+```{r}
+plot(Outstate ~ Elite,
+             main = "Out of State tuition for Elite Universities",
+             ylab = "Tuition",
+             col = "orange",
+             xlab = "Elite")
+```
 
 
+(v) 
+	```{r}
+        par(mfrow = c(2, 2)) # Create a 2 x 2 grid for plots to go in.
+        hist(Expend, breaks = "FD", col = 2)
+        hist(S.F.Ratio, breaks = "FD", col = 4)
+        hist(Grad.Rate, breaks = "FD", col = 6)
+        hist(PhD, breaks = "FD", col = 8)
+	```
+
+
+	(vi) 
+	Note from the previous histogram that the Grad.Rate and the % of
+	faculty with Phd's exceed  100%. This is peculiar. Let us explore.
 	
+	```{r}
+summary(PhD)
+odd.PhD <- which(college_new$PhD == 103)
+odd.PhD
+rownames(college_new)[odd.PhD]
+	```
 
+Turns out we have 103% of the faculty at TAMU Galveston have PhD's.
+The likely explanation is that there is a data anomaly or a mistake
+in data entry and it needs to be cleaned before doing any data
+analysis on this data.
+
+----------
+
+## 2.4.9
+```{r}
+library(ISLR)
+attach(Auto)
+```
+(a) 
+
+```{r}
+str(Auto)
+```
+
+The variable "name" and "horsepower" is qualitative. All of the other 
+variables are quantitative.
+
+(b)
+```{r}
+## Get range of every variable.
+summary(Auto)
+```
+
+(c)
+```{r}
+## Mean.
+sapply(Auto[, -c(4, 9)], mean)
+
+## Standard Deviation.
+sapply(Auto[, -c(4, 9)], sd)
+```
+
+----------
+ **Remark** Notice the use of the `sapply` function. It is an
+ extremely useful function that can be used instead of writing
+ a `for loop` for this type of manipulation. See `?sapply` on
+ R documentation.
+----------
+
+(d)
+
+```{r}
+## remove rows 10 thru 85
+row_rem_auto <- Auto[-seq(10:85), ]
+row_rem_auto
+
+## Find the new ranges.
+summary(row_rem_auto)
+
+## Find the new mean and sd.
+sapply(row_rem_auto[, -c(4, 9)], mean)
+sapply(row_rem_auto[, -c(4, 9)], sd)
+```
+
+(e) 
+	**EDA of the variables.**
+
+  * Create pairwise plots of the variables using `pairs`.
+  
+```{r}
+pairs(Auto)
+```
+
+ **Observations**
+ 
+  * `horsepower` and `displacement` seem to have a linear relationship
+    (correlated)	
+  * `horsepower`and `weight` seem to be strongly correlated as well.
+  
+  * `weight` and `displacement` are also strongly correlated.
+  
+  * `displacement`, `horsepower`, and `weight` variables seem to be
+   highly correlated with the `mpg` (response)
+   variable. `acceleration` also seem to be correlated to `mpg` but to
+   a lesser extent than others.
+   
+(f) In light of the above observations, we may be able to find a 
+strong linear regression relationship such as 
+
+
+```
+mpg ~ displacement + horsepower + weight
+```
+----------
+
+
+## 2.4.10
+```{r}
+library(MASS)
+str(Boston)
+Boston$chas <- as.factor(Boston$chas)
+```
+
+(a) 
+This data set contains housing values of suburbs of Boston. There are
+506 (rows) observations and 14 (columns) variables. `Columns` represent
+the following variables. `Rows` represent *instances* of these variables.
+
+	- ‘crim’ per capita crime rate by town.
+
+	- ‘zn’ proportion of residential land zoned for lots over 25,000
+	sq.ft.
+
+	- ‘indus’ proportion of non-retail business acres per town.
+   
+	- ‘chas’ Charles River dummy variable (= 1 if tract bounds river; 0
+     otherwise).
+
+	- ‘nox’ nitrogen oxides concentration (parts per 10 million).
+	rm average number of rooms per dwelling.
+
+	- ‘age’ proportion of owner-occupied units built prior to 1940.
+
+	- ‘dis’ weighted mean of distances to five Boston employment centres.
+
+	- ‘rad’ index of accessibility to radial highways.
+
+	- ‘tax’ full-value property-tax rate per \$10,000.
+
+	- ‘ptratio’ pupil-teacher ratio by town.
+
+	- ‘black’ 1000(Bk - 0.63)^2 where Bk is the proportion of blacks
+	by town.
+
+	- ‘lstat’ lower status of the population (percent).
+
+	- ‘medv’ median value of owner-occupied homes in \$1000s.
+
+(b) 
+```{r}
+pairs(Boston)
+
+
+## Look at all pairs first. Then decide on the ones to plot.
+par(mfrow = c(2, 2))
+plot(Boston$medv, Boston$crim)
+plot(Boston$dis, Boston$crim)
+plot(Boston$age, Boston$crim)
+plot(Boston$lstat, Boston$crim)
+
+## Reset the plot window to 1
+par(mfrow = c(1,1))
+```
+(c)
+
+The predictors `medv`, `dis`, `age` and `lstat` seem to be predictors
+associated with per capita crime rate.
+
+ - `medv` negatively correlated.
+ - `dis` negatively correlated.
+ - `age` positively correlated.
+ - `lstat` positively correlated.
+ 
+ 
+(d)
+ * Crime rates by suburbs. 
+```{r}
+## Find the range.
+range(Boston$crim)
+## 
+boxplot(Boston$crim)
+```
+
+
+The range for crime rates is `r range(Boston$crim)`. Looking at the
+box plot it is clear that some suburbs have high crime rates.
+
+
+ * Tax rates by suburbs
+```{r}
+range(Boston$tax)
+boxplot(Boston$tax)
+```
+There are no particularly high tax rate suburbs considering
+the fact that the `boxplot` is fairly evenly spread between
+the `max` and the `min`.
+
+ * Pupil-teacher ratios
+```{r}
+range(Boston$ptratio)
+boxplot(Boston$ptratio)
+```
+
+Once gain there does not seem to be particularly high `Pupil-teacher`
+ratios according to the boxplot.
+
+(e) How many of the rivers bound the Charles river?
+```{r}
+## subset required rows first. then count rows.
+nrow(Boston[Boston$chas == 1, ])
+```
+
+(f) What is the median Pupil-teacher ratio among the towns
+in this dataset?
+
+```{r}
+median(Boston$ptratio)
+```
+
+(g) 
+Which suburb of Boston has lowest median value of owner occupied
+homes?. 
+```{r}
+which.min(Boston$medv)
+```
+
+It looks as if the `r which.min(Boston$medv)` th suburbs of Boston
+have the lowest such median value. What if there are two minimum
+values?. We can answer it as follows: **Subset all such rows**
+
+```{r}
+attach(Boston)
+Boston[medv == min(medv),]
+```
+
+It turns out that the 399th as well as the 406th suburbs both
+have lowest median value of owner occupied homes. Also note that
+the `crim` variable has range `r range(crim)`. Both the suburbs
+(and in particular 406th) have high crime rates. 
+
+The pupil teacher ratio is also high in these two particular 
+suburbs compared to the overall range `r range(ptratio)`. 
+
+Surprisingly tax rate also seem to be high in these areas. One
+would expect such areas to have lower tax rates.
+
+(f)
+
+Average number of rooms per dwelling is given by the `rm` variable. 
+
+`r nrow(Boston[Boston$rm > 7, ])` number of suburbs average more than
+7 rooms per dwelling and `r nrow(Boston[Boston$rm > 8, ])` number of
+dwellings average more than 8.
+
+ **The suburbs that average more than 8 rooms per dwelling**
+ 
+```{r}
+large_room_Boston <- Boston[Boston$rm > 8,]
+large_room_Boston
+range(large_room_Boston$crim)
+range(Boston$crim)
+median(large_room_Boston$crim)
+mean(Boston$crim)
+mean(large_room_Boston$crim)
+```
+
+There seem to be relatively low crime rates amount the suburbs that
+average more than 8 rooms per dwelling as expected. The more rooms
+is usually equivalent to affluent neighborhoods.
+
+----------
+
+ **END OF CHAPTER** 
